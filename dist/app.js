@@ -20,6 +20,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const yargs = __importStar(require("yargs"));
+// console.log(chalk.default.blue('This text is blue'));
+// console.log(chalk.default.blue.inverse('This text is over a blue background'));
 yargs.command({
     command: 'add',
     describe: 'Add a new note',
@@ -31,9 +33,7 @@ yargs.command({
         },
     },
     handler(argv) {
-        if (typeof argv.title === 'string') {
-            console.log('Hola');
-        }
+        console.log(argv.title);
     },
 });
 // import {writeFile} from 'fs';
