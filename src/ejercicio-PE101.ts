@@ -44,8 +44,8 @@ export abstract class BasicOperations {
    * Abstract method for all clases
    */
   protected abstract initNumbers(): void;
-  protected abstract reduce(array: number[]) : number;
-  protected abstract map(array: number[]): (n : number) => number[];
+  protected abstract reduce() : number;
+  protected abstract map(): (n : number) => number[];
 
   protected afterInitialisation() {}
   protected afterEvaluation() {}
