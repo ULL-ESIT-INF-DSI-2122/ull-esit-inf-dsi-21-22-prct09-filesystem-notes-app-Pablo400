@@ -1,7 +1,5 @@
 "use strict";
-/* eslint-disable no-unused-vars */
 /* eslint-disable require-jsdoc */
-/* eslint-disable max-len */
 var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
     if (k2 === undefined) k2 = k;
     Object.defineProperty(o, k2, { enumerable: true, get: function() { return m[k]; } });
@@ -22,20 +20,24 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const yargs = __importStar(require("yargs"));
-const addNote_1 = require("./NoteOperations/addNote");
-const modifyNote_1 = require("./NoteOperations/modifyNote");
-const removeNote_1 = require("./NoteOperations/removeNote");
-const listNotes_1 = require("./NoteOperations/listNotes");
-const readNotes_1 = require("./NoteOperations/readNotes");
-const addNote = new addNote_1.AddNote();
-const modifyNote = new modifyNote_1.ModifyNote();
-const removeNote = new removeNote_1.RemoveNote();
-const listNotes = new listNotes_1.ListNotes();
-const readNote = new readNotes_1.ReadNotes();
-addNote.addNote();
-modifyNote.modifyNote();
-removeNote.removeNote();
-listNotes.listNotes();
-readNote.readNote();
-yargs.parse();
+exports.ChalkColor = void 0;
+const chalk = __importStar(require("chalk"));
+class ChalkColor {
+    constructor() { }
+    getColor(color, print) {
+        if (color === 'red') {
+            return chalk.default.red(`${print}`);
+        }
+        else if (color === 'green') {
+            return chalk.default.green(`${print}`);
+        }
+        else if (color === 'yellow') {
+            return chalk.default.yellow(`${print}`);
+        }
+        else if (color === 'blue') {
+            return chalk.default.blue(`${print}`);
+        }
+        return undefined;
+    }
+}
+exports.ChalkColor = ChalkColor;
