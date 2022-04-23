@@ -17,8 +17,6 @@ export abstract class BasicOperations {
   }
 
   public run() {
-    this.numberArray;
-
     this.initNumbers();
 
     this.afterInitialisation();
