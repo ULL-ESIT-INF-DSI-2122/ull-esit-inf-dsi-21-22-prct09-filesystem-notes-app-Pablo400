@@ -102,14 +102,9 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
         handler(argv) {
           const color = new ChalkColor();
           let createDir: boolean = false;
-          // Comprobar si existe el usuario mirando en el fichero users.json que es una pequeña base de datos con los usuarios del sistema
-          // y creamos su fichero correspondiente
-          fs.readFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/users.json`, (err: any, data: Buffer) => {
-            if (err) {
-              console.log(color.getColor('red', 'Ese fichero no existe'));
-            }
-
-            const json = JSON.parse(data.toString());
+          try {
+            fs.readFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/users.json`);
+            const json = require(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/users.json`);
             for (const user of json) {
               if (argv.user === user.username) {
                 createDir = true;
@@ -118,11 +113,13 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
             }
             if (createDir === true) {
               fs.mkdirSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}`);
-              console.log(color.getColor('green', 'Directorio del usuario creado'));
+              return console.log(color.getColor('green', 'Directorio del usuario creado'));
             } else {
-              console.log(color.getColor('red', 'Ese usuario no existe'));
+              return console.log(color.getColor('red', 'No se pudo crear el directorio'));
             }
-          });
+          } catch (err) {
+            return console.log(color.getColor('red', 'Ese usuario ya está incluido'));
+          }
         },
       });
     }
@@ -166,11 +163,7 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
         },
         handler(argv) {
           const color = new ChalkColor();
-          fs.access(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}`, (err: any) => {
-            if (err) {
-              console.log(color.getColor('red', 'Ese usuario no existe'));
-            }
-
+          if (fs.existsSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}`)) {
             const json: any = {
               title: argv.title,
               body: argv.body,
@@ -179,25 +172,25 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
 
             if (argv.title != '' && argv.color != '' && argv.body != '' ) {
               if (argv.color === 'red' || argv.color === 'green' || argv.color === 'yellow' || argv.color === 'blue') {
-              // Se comprueba si la nota ya existe
                 if (fs.existsSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`)) {
                   console.log(color.getColor('red', 'Esa nota ya existe'));
                 } else {
-                  fs.writeFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, JSON.stringify(json, null, 2), (err: any) => {
-                    if (err) {
-                      return console.log(color.getColor('red', 'No se ha podido crear la nota'));
-                    } else {
-                      return console.log(color.getColor('green', 'La nota se ha creado de forma satisfactoria'));
-                    }
-                  });
+                  try {
+                    fs.appendFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, JSON.stringify(json, null, 2));
+                    return console.log(color.getColor('green', 'La nota se ha creado de forma satisfactoria'));
+                  } catch (err) {
+                    return console.log(color.getColor('red', 'No se ha podido crear la nota'));
+                  }
                 }
               } else {
-                return console.log(color.getColor('red', 'No se puede crear una mota si no se le indican un color, use: red, green, yellow o blue como colores'));
+                return console.log(color.getColor('red', 'No se puede crear una nota si no se le indican un color, use: red, green, yellow o blue como colores'));
               }
             } else {
               return console.log(color.getColor('red', 'No se puede crear una nota vacía'));
             }
-          });
+          } else {
+            return console.log(color.getColor('red', 'Ese usuario no existe'));
+          }
         },
       });
     }
@@ -212,6 +205,10 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
     constructor() {
       super();
     }
+
+    /**
+    * This function modifies an existing note
+    */
     modifyNote() {
       yargs.command({
         command: 'modify',
@@ -236,24 +233,20 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
         handler(argv) {
           const color = new ChalkColor();
           if (fs.existsSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`)) {
-            fs.readFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, (err: Error, data: Buffer) => {
-              if (err) {
-                return console.log(color.getColor('red', 'Esa nota no existe'));
-              }
+            try {
+              fs.readFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
 
-              // Paso el contenido del fichero en formato JSON a una variable y le cambio el valor del cuerpo
-              // y se crea el mismo fichero con el nuevo body pasado
-              const json = JSON.parse(data.toString());
+              const json = require(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
               json.body = argv.body;
-
-              fs.writeFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, JSON.stringify(json, null, 2), (err: any) => {
-                if (err) {
-                  return console.log(color.getColor('red', 'No se ha podido crear la nota'));
-                } else {
-                  return console.log(color.getColor('green', 'La nota se ha creado cambiado de forma satisfactoria'));
-                }
-              });
-            });
+              try {
+                fs.writeFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, JSON.stringify(json, null, 2));
+                return console.log(color.getColor('green', 'La nota se ha modificado de forma satisfactoria'));
+              } catch (err) {
+                return console.log(color.getColor('red', 'No se ha podido crear la nota'));
+              }
+            } catch (err) {
+              return console.log(color.getColor('red', 'Esa nota no existe'));
+            }
           } else {
             console.log(color.getColor('red', 'Ha ocurrido un error inesperado'));
           }
@@ -270,6 +263,7 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
     constructor() {
       super();
     }
+
     removeNote() {
       yargs.command({
         command: 'remove',
@@ -288,18 +282,21 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
         },
         handler(argv) {
           const color = new ChalkColor();
-          fs.readFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, (err: any, data: any) => {
-            if (err) {
-              return console.log(color.getColor('red', 'Esa nota no existe'));
-            }
+          try {
+            fs.readFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
             if (fs.existsSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`)) {
-              fs.unlink(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, (err: any) => {
-                return console.log('Nota eliminada');
-              });
+              try {
+                fs.unlinkSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
+                return console.log(color.getColor('green', 'Nota eliminada'));
+              } catch (err) {
+                return console.log(color.getColor('red', 'La nota no pudo ser eliminada'));
+              }
             } else {
               console.log(color.getColor('red', 'Ha ocurrido un error inesperado'));
             }
-          });
+          } catch (err) {
+            return console.log(color.getColor('red', 'Esa nota no existe'));
+          }
         },
       });
     }
@@ -310,6 +307,46 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
     - Está clase permite listar las notas dentro del directorio de algún usuario.
 
   ```typescript
+  export class ListNotes extends ChalkColor implements listNotesInterface {
+    constructor() {
+      super();
+    }
+
+    listNotes() {
+      yargs.command({
+        command: 'list',
+        describe: 'List all notes',
+        builder: {
+          user: {
+            describe: 'User name',
+            demandOption: true,
+            type: 'string',
+          },
+        },
+        handler(argv) {
+          const color = new ChalkColor();
+          fs.readdir(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}`, (err: any, files: any) =>{
+            if (err) {
+              return console.log(color.getColor('red', 'Ese usuario no existe'));
+            }
+            // Listing all files using forEach
+            files.forEach((file: any) => {
+              fs.readFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${file}`, (err: any, data: any) => {
+                if (err) {
+                  return console.log(color.getColor('red', 'Ese fichero no existe'));
+                }
+                const json: any = JSON.parse(data.toString());
+                console.log(color.getColor(json.color, json.title));
+              });
+              if (files.length === 0) {
+                return console.log(color.getColor('red', 'Ese usuario no tiene ninguna nota'));
+              }
+            });
+          });
+        },
+      });
+    }
+  };
   ``` 
   - La clase ```ReadNote``` en fichero ```readNote.ts```.
     - Está clase permite leer alguna nota de un usuario en concreto dentro del directorio de dicho usuario.
@@ -319,6 +356,7 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
     constructor() {
       super();
     }
+
     readNote() {
       yargs.command({
         command: 'read',
@@ -338,14 +376,14 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
         handler(argv) {
           const color = new ChalkColor();
           if (fs.existsSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`)) {
-            fs.readFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, (err: any, data: any) => {
-              if (err) {
-                return console.log(color.getColor('red', 'Ha ocurrido un error inesperado'));
-              }
-              const json: any = JSON.parse(data.toString());
+            try {
+              fs.readFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
+              const json: any = require(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
               console.log(color.getColor(json.color, json.title));
               console.log(color.getColor(json.color, json.body));
-            });
+            } catch (err) {
+              return console.log(color.getColor('red', 'Ha ocurrido un error inesperado'));
+            }
           } else {
             return console.log(color.getColor('red', 'Esa nota no existe'));
           }
@@ -436,5 +474,7 @@ Un ejemplo de los atríbutos lo podemos ver en el fichero ```prueba.json```:
   "color": "blue"
 }
 ```
+
+## Conclusión
 
 Para terminar, me ha parecido una práctica muy interesante no solo por ser el punto de contacto con node.js si no porque me ha demostrado que con las herramientas que tiene para trabajar con el sistema de ficheros son bastante buenas y fáciles de manejar. También espero que con las próximas APIs o herramientas que utilicemos sean igual o incluso más interesantes que está.
