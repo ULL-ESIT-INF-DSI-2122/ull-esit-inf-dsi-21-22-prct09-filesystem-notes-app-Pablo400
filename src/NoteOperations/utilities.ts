@@ -2,10 +2,7 @@
 /* eslint-disable require-jsdoc */
 
 import * as chalk from 'chalk';
-
-interface chalkColorInterface {
-  getColor(color: string, print: string): string | undefined;
-}
+import {chalkColorInterface} from './interfaces';
 
 export class ChalkColor implements chalkColorInterface {
   constructor() {}

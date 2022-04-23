@@ -2,12 +2,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable require-jsdoc */
 import * as yargs from 'yargs';
-import {ChalkColor} from './utilities';
 const fs = require('fs');
 
-interface modifyNoteInterface {
-  modifyNote(): void;
-}
+import {ChalkColor} from './utilities';
+import {modifyNoteInterface} from './interfaces';
 
 export class ModifyNote extends ChalkColor implements modifyNoteInterface {
   constructor() {

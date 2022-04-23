@@ -15,6 +15,7 @@ const removeNote = new RemoveNote();
 const listNotes = new ListNotes();
 const readNote = new ReadNotes();
 
+addNote.userAddDirectory();
 addNote.addNote();
 modifyNote.modifyNote();
 removeNote.removeNote();

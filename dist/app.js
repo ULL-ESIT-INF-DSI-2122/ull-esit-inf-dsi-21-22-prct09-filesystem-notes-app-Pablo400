@@ -33,6 +33,7 @@ const modifyNote = new modifyNote_1.ModifyNote();
 const removeNote = new removeNote_1.RemoveNote();
 const listNotes = new listNotes_1.ListNotes();
 const readNote = new readNotes_1.ReadNotes();
+addNote.userAddDirectory();
 addNote.addNote();
 modifyNote.modifyNote();
 removeNote.removeNote();

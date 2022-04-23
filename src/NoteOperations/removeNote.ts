@@ -2,12 +2,10 @@
 /* eslint-disable no-unused-vars */
 /* eslint-disable require-jsdoc */
 import * as yargs from 'yargs';
-import {ChalkColor} from './utilities';
 const fs = require('fs');
 
-interface removeNoteInterface {
-  removeNote(): void;
-}
+import {ChalkColor} from './utilities';
+import {removeNoteInterface} from './interfaces';
 
 export class RemoveNote extends ChalkColor implements removeNoteInterface {
   constructor() {
