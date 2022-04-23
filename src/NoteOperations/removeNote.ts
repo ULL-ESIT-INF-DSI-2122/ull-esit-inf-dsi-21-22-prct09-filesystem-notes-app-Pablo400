@@ -7,10 +7,17 @@ const fs = require('fs');
 import {ChalkColor} from './utilities';
 import {removeNoteInterface} from './interfaces';
 
+/**
+ * Class to Remove Notes
+ */
 export class RemoveNote extends ChalkColor implements removeNoteInterface {
   constructor() {
     super();
   }
+
+  /**
+   * This function removes a note
+   */
   removeNote() {
     yargs.command({
       command: 'remove',
@@ -29,18 +36,21 @@ export class RemoveNote extends ChalkColor implements removeNoteInterface {
       },
       handler(argv) {
         const color = new ChalkColor();
-        fs.readFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, (err: any, data: any) => {
-          if (err) {
-            return console.log(color.getColor('red', 'Esa nota no existe'));
-          }
+        try {
+          fs.readFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
           if (fs.existsSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`)) {
-            fs.unlink(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, (err: any) => {
-              return console.log('Nota eliminada');
-            });
+            try {
+              fs.unlinkSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
+              return console.log(color.getColor('green', 'Nota eliminada'));
+            } catch (err) {
+              return console.log(color.getColor('red', 'La nota no pudo ser eliminada'));
+            }
           } else {
             console.log(color.getColor('red', 'Ha ocurrido un error inesperado'));
           }
-        });
+        } catch (err) {
+          return console.log(color.getColor('red', 'Esa nota no existe'));
+        }
       },
     });
   }

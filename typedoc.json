@@ -1,0 +1,15 @@
+{
+  "entryPoints": [
+    "./src/app.ts",
+    "./src/ejercicio-PE101.ts",
+    "./src/NoteOperations/addNote.ts",
+    "./src/NoteOperations/addUserDirectory.ts",
+    "./src/NoteOperations/interfaces.ts",
+    "./src/NoteOperations/listNotes.ts",
+    "./src/NoteOperations/modifyNote.ts",
+    "./src/NoteOperations/readNotes.ts",
+    "./src/NoteOperations/removeNote.ts",
+    "./src/NoteOperations/utilities.ts"
+  ],
+  "out": "./docs"
+  }

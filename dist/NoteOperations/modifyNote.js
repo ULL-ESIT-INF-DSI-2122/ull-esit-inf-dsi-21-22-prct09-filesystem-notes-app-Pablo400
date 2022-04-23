@@ -24,8 +24,8 @@ exports.ModifyNote = void 0;
 /* eslint-disable no-unused-vars */
 /* eslint-disable require-jsdoc */
 const yargs = __importStar(require("yargs"));
-const utilities_1 = require("./utilities");
 const fs = require('fs');
+const utilities_1 = require("./utilities");
 class ModifyNote extends utilities_1.ChalkColor {
     constructor() {
         super();
@@ -54,23 +54,23 @@ class ModifyNote extends utilities_1.ChalkColor {
             handler(argv) {
                 const color = new utilities_1.ChalkColor();
                 if (fs.existsSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`)) {
-                    fs.readFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, (err, data) => {
-                        if (err) {
-                            return console.log(color.getColor('red', 'Esa nota no existe'));
-                        }
+                    try {
+                        fs.readFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
                         // Paso el contenido del fichero en formato JSON a una variable y le cambio el valor del cuerpo
                         // y se crea el mismo fichero con el nuevo body pasado
-                        const json = JSON.parse(data.toString());
+                        const json = require(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
                         json.body = argv.body;
-                        fs.writeFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, JSON.stringify(json, null, 2), (err) => {
-                            if (err) {
-                                return console.log(color.getColor('red', 'No se ha podido crear la nota'));
-                            }
-                            else {
-                                return console.log(color.getColor('green', 'La nota se ha creado cambiado de forma satisfactoria'));
-                            }
-                        });
-                    });
+                        try {
+                            fs.writeFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, JSON.stringify(json, null, 2));
+                            return console.log(color.getColor('green', 'La nota se ha modificado de forma satisfactoria'));
+                        }
+                        catch (err) {
+                            return console.log(color.getColor('red', 'No se ha podido crear la nota'));
+                        }
+                    }
+                    catch (err) {
+                        return console.log(color.getColor('red', 'Esa nota no existe'));
+                    }
                 }
                 else {
                     console.log(color.getColor('red', 'Ha ocurrido un error inesperado'));

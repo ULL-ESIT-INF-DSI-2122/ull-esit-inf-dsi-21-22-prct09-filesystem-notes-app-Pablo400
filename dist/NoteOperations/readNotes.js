@@ -24,8 +24,8 @@ exports.ReadNotes = void 0;
 /* eslint-disable no-unused-vars */
 /* eslint-disable require-jsdoc */
 const yargs = __importStar(require("yargs"));
-const utilities_1 = require("./utilities");
 const fs = require('fs');
+const utilities_1 = require("./utilities");
 class ReadNotes extends utilities_1.ChalkColor {
     constructor() {
         super();
@@ -49,14 +49,15 @@ class ReadNotes extends utilities_1.ChalkColor {
             handler(argv) {
                 const color = new utilities_1.ChalkColor();
                 if (fs.existsSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`)) {
-                    fs.readFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, (err, data) => {
-                        if (err) {
-                            return console.log(color.getColor('red', 'Ha ocurrido un error inesperado'));
-                        }
-                        const json = JSON.parse(data.toString());
+                    try {
+                        fs.readFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
+                        const json = require(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
                         console.log(color.getColor(json.color, json.title));
                         console.log(color.getColor(json.color, json.body));
-                    });
+                    }
+                    catch (err) {
+                        return console.log(color.getColor('red', 'Ha ocurrido un error inesperado'));
+                    }
                 }
                 else {
                     return console.log(color.getColor('red', 'Esa nota no existe'));

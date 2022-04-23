@@ -24,50 +24,11 @@ exports.AddNote = void 0;
 /* eslint-disable no-unused-vars */
 /* eslint-disable require-jsdoc */
 const yargs = __importStar(require("yargs"));
-const utilities_1 = require("./utilities");
 const fs = require('fs');
+const utilities_1 = require("./utilities");
 class AddNote extends utilities_1.ChalkColor {
     constructor() {
         super();
-    }
-    userAddDirectory() {
-        yargs.command({
-            command: 'addUser',
-            describe: 'Adds a user to the system',
-            builder: {
-                user: {
-                    describe: 'User name',
-                    demandOption: true,
-                    type: 'string',
-                },
-            },
-            handler(argv) {
-                const color = new utilities_1.ChalkColor();
-                let createDir = false;
-                // Comprobar si existe el usuario mirando en el fichero users.json que es una pequeña base de datos con los usuarios del sistema
-                fs.readFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/users.json`, (err, data) => {
-                    if (err) {
-                        console.log(color.getColor('red', 'Ese fichero no existe'));
-                    }
-                    const json = JSON.parse(data.toString());
-                    console.log(json);
-                    for (const user of json) {
-                        if (argv.user === user.username) {
-                            console.log('Hola');
-                            createDir = true;
-                            break;
-                        }
-                    }
-                    if (createDir === true) {
-                        fs.mkdirSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}`);
-                        console.log(color.getColor('green', 'Directorio del usuario creado'));
-                    }
-                    else {
-                        console.log(color.getColor('red', 'Ese usuario no existe'));
-                    }
-                });
-            },
-        });
     }
     addNote() {
         yargs.command({
@@ -97,10 +58,8 @@ class AddNote extends utilities_1.ChalkColor {
             },
             handler(argv) {
                 const color = new utilities_1.ChalkColor();
-                fs.access(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}`, (err) => {
-                    if (err) {
-                        console.log(color.getColor('red', 'Ese usuario no existe'));
-                    }
+                // Comrpueba si el directorio del usuario ya existe
+                if (fs.existsSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}`)) {
                     const json = {
                         title: argv.title,
                         body: argv.body,
@@ -113,24 +72,26 @@ class AddNote extends utilities_1.ChalkColor {
                                 console.log(color.getColor('red', 'Esa nota ya existe'));
                             }
                             else {
-                                fs.writeFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, JSON.stringify(json, null, 2), (err) => {
-                                    if (err) {
-                                        return console.log(color.getColor('red', 'No se ha podido crear la nota'));
-                                    }
-                                    else {
-                                        return console.log(color.getColor('green', 'La nota se ha creado de forma satisfactoria'));
-                                    }
-                                });
+                                try {
+                                    fs.appendFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`, JSON.stringify(json, null, 2));
+                                    return console.log(color.getColor('green', 'La nota se ha creado de forma satisfactoria'));
+                                }
+                                catch (err) {
+                                    return console.log(color.getColor('red', 'No se ha podido crear la nota'));
+                                }
                             }
                         }
                         else {
-                            return console.log(color.getColor('red', 'No se puede crear una mota si no se le indican un color, use: red, green, yellow o blue como colores'));
+                            return console.log(color.getColor('red', 'No se puede crear una nota si no se le indican un color, use: red, green, yellow o blue como colores'));
                         }
                     }
                     else {
                         return console.log(color.getColor('red', 'No se puede crear una nota vacía'));
                     }
-                });
+                }
+                else {
+                    return console.log(color.getColor('red', 'Ese usuario no existe'));
+                }
             },
         });
     }

@@ -7,10 +7,17 @@ const fs = require('fs');
 import {ChalkColor} from './utilities';
 import {listNotesInterface} from './interfaces';
 
+/**
+ * Class to List Notes
+ */
 export class ListNotes extends ChalkColor implements listNotesInterface {
   constructor() {
     super();
   }
+
+  /**
+   * This function list all notes on any directory of a user
+   */
   listNotes() {
     yargs.command({
       command: 'list',
@@ -37,10 +44,10 @@ export class ListNotes extends ChalkColor implements listNotesInterface {
               const json: any = JSON.parse(data.toString());
               console.log(color.getColor(json.color, json.title));
             });
+            if (files.length === 0) {
+              return console.log(color.getColor('red', 'Ese usuario no tiene ninguna nota'));
+            }
           });
-          if (files.length === 0) {
-            console.log(color.getColor('red', 'Ese usuario no tiene ninguna nota'));
-          }
         });
       },
     });

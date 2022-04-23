@@ -16,7 +16,6 @@ class BasicOperations {
         this.numberArray = [];
     }
     run() {
-        this.numberArray;
         this.initNumbers();
         this.afterInitialisation();
         this.evaluateArray();

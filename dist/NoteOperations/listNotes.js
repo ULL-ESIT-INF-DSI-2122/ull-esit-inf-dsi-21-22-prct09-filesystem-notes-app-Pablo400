@@ -24,8 +24,8 @@ exports.ListNotes = void 0;
 /* eslint-disable no-unused-vars */
 /* eslint-disable require-jsdoc */
 const yargs = __importStar(require("yargs"));
-const utilities_1 = require("./utilities");
 const fs = require('fs');
+const utilities_1 = require("./utilities");
 class ListNotes extends utilities_1.ChalkColor {
     constructor() {
         super();
@@ -56,10 +56,10 @@ class ListNotes extends utilities_1.ChalkColor {
                             const json = JSON.parse(data.toString());
                             console.log(color.getColor(json.color, json.title));
                         });
+                        if (files.length === 0) {
+                            return console.log(color.getColor('red', 'Ese usuario no tiene ninguna nota'));
+                        }
                     });
-                    if (files.length === 0) {
-                        console.log(color.getColor('red', 'Ese usuario no tiene ninguna nota'));
-                    }
                 });
             },
         });
