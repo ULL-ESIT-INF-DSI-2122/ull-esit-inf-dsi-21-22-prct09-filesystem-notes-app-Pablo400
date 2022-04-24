@@ -38,15 +38,11 @@ export class RemoveNote extends ChalkColor implements removeNoteInterface {
         const color = new ChalkColor();
         try {
           fs.readFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
-          if (fs.existsSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`)) {
-            try {
-              fs.unlinkSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
-              return console.log(color.getColor('green', 'Nota eliminada'));
-            } catch (err) {
-              return console.log(color.getColor('red', 'La nota no pudo ser eliminada'));
-            }
-          } else {
-            console.log(color.getColor('red', 'Ha ocurrido un error inesperado'));
+          try {
+            fs.unlinkSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
+            return console.log(color.getColor('green', 'Nota eliminada'));
+          } catch (err) {
+            return console.log(color.getColor('red', 'La nota no pudo ser eliminada'));
           }
         } catch (err) {
           return console.log(color.getColor('red', 'Esa nota no existe'));

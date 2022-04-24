@@ -16,7 +16,7 @@ Para interactuar con los diferentes comandos de la aplicación con la línea de 
   ```
 - Eliminar una nota
   ```bash
-    node dist/app.js remove --user="" --title="" --body=""
+    node dist/app.js remove --user="" --title=""
   ```
 - Lista notas
   ```bash
@@ -45,7 +45,7 @@ En mi implementación me he decantado por utilizar interfaces y clases, pero ant
  ┗ 📜app.ts
 ```
 
-Cono podemos ver mi aplicación principal se define en ```app.ts``` donde se invocan las diferentes clases para poder acceder a las funcionalidades implementadas en cada clase. Dentro del directorio ```NoteOperations``` se encuentran todas las interfaces que definen los métodos y las clases que implementan dichos métodos. 
+Como podemos ver en la imagen anterior tenemos por un lado el fichero ```app.ts```, que es la aplicación donde se invocan las diferentes clases donde cada clase implementas una operación distinta, y por otro la lado el directorio ```NoteOperations``` donde se encuentran todas las clases e interfaces. 
 
 ```typescript
 import * as yargs from 'yargs';
@@ -73,9 +73,11 @@ readNote.readNote();
 yargs.parse();
 ```
 
-Cada clase implementa una operación distinta de las enumeradas anteriormente y también se implementa una clase adicional, está clase permite a los usuarios que se encuentre en un base de datos (incluido en un fichero JSON) crear su directorio para crear notas y realizar las diferentes operaciones de la aplicación.
+Cada clase implementa una operación distinta de las enumeradas anteriormente y también se implementa una clase adicional, está clase permite a los usuarios que se encuentre en una base de datos (incluido en un fichero JSON) crear su directorio para crear notas y realizar las diferentes operaciones de la aplicación. Este fichero JSON se encuentra en el directorio ```ProgramFiles``` con el nombre de ```users.json```, también en este directorio se guardan las notas de los usuarios.
 
-Todos los comandos relacionados con al línea de comandos se implementan utilizando el paquete ```yargs``` que nos ayuda ayuda a crear herramientas interactivas usando línea de comandos, analizando los argumentos y generando una interfaz elegante para el usuario. Dentro de cada clase se utiliza un comando distinto usando este paquete.
+Todos los comandos relacionados con al línea de comandos se implementan utilizando el paquete ```yargs``` que nos ayuda ayuda a crear herramientas interactivas usando línea de comandos, analizando los argumentos y generando una interfaz elegante para el usuario. Dentro de cada clase se crea un comando distinto usando este paquete.
+
+Antes de finalmente comentar la funcionalidad básica de las clases se recuerda que las diferentes clases se encuentran en el directorio ```NoteOperations``` y todos los ficheros JSON relacionados con la base de datos de los usuarios y las notas se enecuentran en el directorio ````ProgramFiles```.
 
 Después de todas estas explicaciones pasamos a comentar cada clase y la interfaz creada:
 
@@ -125,6 +127,8 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
     }
   };
   ``` 
+
+  > En esta clase se utilizan las funciones síncronas de ```readFileSync```, para comprobar si el usuario está incluido en la base de datos y se procede a crear el directorio, y de ```mkdirSync``` para crear el directorio tras haber comprobado la existencia del usuario en la base de datos.
 
   - La clase ```AddNote``` en fichero ```addNote.ts```.
     - Está clase permite crear una nota con una serie de parámetros pasados, cada nota se guarda en un fichero JSON con el título de dicha nota que se guarda en el directorio ```ProgramFiles``` en concreto en el directorio con el nombre de dicho usuario.
@@ -197,6 +201,8 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
   };
   ``` 
 
+  > En esta clase se utiliza la función síncrona de ```exitsSync```, para primero comprobar si el usuario pasado como parámetro tiene un directorio o no y seguidamente se comprueba si la nota que se desea agregar existe o no. También se usa la función de ```appendFileSync``` para crear la nota con los parámetros que se hayan pasado.
+
   - La clase ```ModifyNote``` en fichero ```modifyNote.ts```.
     - Está clase permite modificar las notas ya existentes en el directorio de algún usuario.
 
@@ -255,6 +261,9 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
     }
   };
   ``` 
+
+  > En esta clase se utiliza la función síncrona de ```exitsSync```, para primero comprobar si la nota que se quiere modificar existe o no. También se usa la función de ```writeFileSync``` para escribir de nuevo el contenido anterior de la nota, pero cambiando el cuerpo de dicha nota.
+
   - La clase ```RemoveNote``` en fichero ```removeNote.ts```.
     - Está clase permite eliminar las notas ya existentes en el directorio de algún usuario.
 
@@ -284,15 +293,11 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
           const color = new ChalkColor();
           try {
             fs.readFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
-            if (fs.existsSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`)) {
-              try {
-                fs.unlinkSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
-                return console.log(color.getColor('green', 'Nota eliminada'));
-              } catch (err) {
-                return console.log(color.getColor('red', 'La nota no pudo ser eliminada'));
-              }
-            } else {
-              console.log(color.getColor('red', 'Ha ocurrido un error inesperado'));
+            try {
+              fs.unlinkSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${argv.title}.json`);
+              return console.log(color.getColor('green', 'Nota eliminada'));
+            } catch (err) {
+              return console.log(color.getColor('red', 'La nota no pudo ser eliminada'));
             }
           } catch (err) {
             return console.log(color.getColor('red', 'Esa nota no existe'));
@@ -303,6 +308,8 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
   };
   ``` 
 
+  > En esta clase se utiliza la función síncrona de ```readFileSync```, para comprobar si la nota que se quiere eliminar existe o no. También se usa la función de ```unlinkSync``` para eliminar la nota que el usuario quiera eliminar.
+
   - La clase ```ListNote``` en fichero ```listNote.ts```.
     - Está clase permite listar las notas dentro del directorio de algún usuario.
 
@@ -312,6 +319,9 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
       super();
     }
 
+    /**
+    * This function list all notes on any directory of a user
+    */
     listNotes() {
       yargs.command({
         command: 'list',
@@ -325,29 +335,32 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
         },
         handler(argv) {
           const color = new ChalkColor();
-          fs.readdir(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}`, (err: any, files: any) =>{
-            if (err) {
-              return console.log(color.getColor('red', 'Ese usuario no existe'));
-            }
-            // Listing all files using forEach
-            files.forEach((file: any) => {
-              fs.readFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${file}`, (err: any, data: any) => {
-                if (err) {
+          if (fs.existsSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}`)) {
+            const files = fs.readdirSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}`);
+            if (files.length === 0) {
+              return console.log(color.getColor('red', 'Ese usuario no tiene ninguna nota'));
+            } else {
+              files.forEach((file: string) => {
+                try {
+                  fs.readFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${file}`);
+                  const json: any = require(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${file}`);
+                  console.log(color.getColor(json.color, json.title));
+                } catch (err) {
                   return console.log(color.getColor('red', 'Ese fichero no existe'));
                 }
-                const json: any = JSON.parse(data.toString());
-                console.log(color.getColor(json.color, json.title));
               });
-              if (files.length === 0) {
-                return console.log(color.getColor('red', 'Ese usuario no tiene ninguna nota'));
-              }
-            });
-          });
+            }
+          } else {
+            return console.log(color.getColor('red', 'Ese directorio no existe'));
+          }
         },
       });
     }
   };
   ``` 
+
+  > En esta clase se utiliza la función síncrona de ```existSync```, para comprobar si el directorio de usuario existe o no. También se usa la función de ```readdirSync``` donde todo el contenido del directorio, es decir el nombre de los ficheros, se pasa a formato de array. Por último con la función ```readFileSync``` se lee cada fichero del directorio para impormir el título con el color correspondiente al atríbuto seleccionado por el usuario.
+
   - La clase ```ReadNote``` en fichero ```readNote.ts```.
     - Está clase permite leer alguna nota de un usuario en concreto dentro del directorio de dicho usuario.
 
@@ -392,6 +405,8 @@ Después de todas estas explicaciones pasamos a comentar cada clase y la interfa
     }
   };
   ``` 
+
+  > En esta clase se utiliza la función síncrona de ```exitsSync```, para comprobar si la nota que se quiere modificar existe o no. También se usa la función de ```readFileSync``` para mostrar una serie de atríbutos de la nota según el color que haya definido el usuario en la nota.
 
   - La clase ```ChalkColor``` en el fichero ```utilities.ts```.
     - Está clase utiliza el paquete ```chalk``` para mostrar el texto de la notas en algún color (en los atríbutos se define el color de la nota) y para mostrar las errores de color rojo o los aciertos de color verde. Está clase contiene un método que recibe el color de la nota y el texto que se quiere colorear.
@@ -474,6 +489,9 @@ Un ejemplo de los atríbutos lo podemos ver en el fichero ```prueba.json```:
   "color": "blue"
 }
 ```
+
+## Ejemplo de ejecución
+
 
 ## Conclusión
 

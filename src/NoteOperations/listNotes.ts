@@ -31,24 +31,24 @@ export class ListNotes extends ChalkColor implements listNotesInterface {
       },
       handler(argv) {
         const color = new ChalkColor();
-        fs.readdir(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}`, (err: any, files: any) =>{
-          if (err) {
-            return console.log(color.getColor('red', 'Ese usuario no existe'));
-          }
-          // Listing all files using forEach
-          files.forEach((file: any) => {
-            fs.readFile(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${file}`, (err: any, data: any) => {
-              if (err) {
+        if (fs.existsSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}`)) {
+          const files = fs.readdirSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}`);
+          if (files.length === 0) {
+            return console.log(color.getColor('red', 'Ese usuario no tiene ninguna nota'));
+          } else {
+            files.forEach((file: string) => {
+              try {
+                fs.readFileSync(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${file}`);
+                const json: any = require(`/home/usuario/ull-esit-inf-dsi-21-22-prct09-filesystem-notes-app-Pablo400/ProgramFiles/${argv.user}/${file}`);
+                console.log(color.getColor(json.color, json.title));
+              } catch (err) {
                 return console.log(color.getColor('red', 'Ese fichero no existe'));
               }
-              const json: any = JSON.parse(data.toString());
-              console.log(color.getColor(json.color, json.title));
             });
-            if (files.length === 0) {
-              return console.log(color.getColor('red', 'Ese usuario no tiene ninguna nota'));
-            }
-          });
-        });
+          }
+        } else {
+          return console.log(color.getColor('red', 'Ese directorio no existe'));
+        }
       },
     });
   }
