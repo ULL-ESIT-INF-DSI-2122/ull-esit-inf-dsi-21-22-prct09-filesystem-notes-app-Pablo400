@@ -492,6 +492,7 @@ Un ejemplo de los atríbutos lo podemos ver en el fichero ```prueba.json```:
 
 ## Ejemplo de ejecución
 
+![image](https://user-images.githubusercontent.com/64638993/164992891-95b2b7e0-e424-4fd9-844f-05a3ac75a60b.png)
 
 ## Conclusión
 
